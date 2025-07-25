@@ -1,0 +1,271 @@
+{
+	"info": {
+		"_postman_id": "bc7e4383-3b7d-4fb7-9846-55cb18ab0c68",
+		"name": "MVP Sécurité API Journaux ERP",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "41726972"
+	},
+	"item": [
+		{
+			"name": "token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Récupère le token envoyé dans les headers\r",
+							"const token = pm.request.headers.get(\"Authorization\");\r",
+							"\r",
+							"// Le token qu’on considère comme valide\r",
+							"const expectedToken = \"Bearer faketoken123\";\r",
+							"\r",
+							"// Si le token est valide\r",
+							"if (token === expectedToken) {\r",
+							"    console.log(\" Token valide détecté :\", token);\r",
+							"    pm.test(\"Token est valide\", function () {\r",
+							"        pm.expect(token).to.eql(expectedToken);\r",
+							"    });\r",
+							"} else {\r",
+							"    console.log(\" Token invalide détecté :\", token);\r",
+							"    pm.test(\"Erreur : Token invalide\", function () {\r",
+							"        pm.expect.fail(\"Token JWT invalide détecté !\");\r",
+							"    });\r",
+							"}\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer token_invalide",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"journal_code\": \"ACH\",\r\n  \"date\": \"2025-07-24\",\r\n  \"montant\": 55000,\r\n  \"description\": \"Achat de matériel\",\r\n  \"reference\": \"INV-20250724-01\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://postman-echo.com/post",
+					"protocol": "https",
+					"host": [
+						"postman-echo",
+						"com"
+					],
+					"path": [
+						"post"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "champ manquant (montant )",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const body = pm.request.body.raw;\r",
+							"const json = JSON.parse(body);\r",
+							"\r",
+							"// Vérifie que le champ \"montant\" est bien présent\r",
+							"if (json.hasOwnProperty(\"montant\")) {\r",
+							"    pm.test(\" Test passé : le champ 'montant' est présent\", function () {\r",
+							"        pm.expect(json).to.have.property(\"montant\");\r",
+							"    });\r",
+							"} else {\r",
+							"    pm.test(\"Erreur : le champ 'montant' est manquant\", function () {\r",
+							"        pm.expect.fail(\"Le champ 'montant' est absent du corps JSON\");\r",
+							"    });\r",
+							"}\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer token_invalide",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"journal_code\": \"ACH\",\r\n  \"date\": \"2025-07-24\",\r\n  \"description\": \"Achat de matériel\",\r\n  \"reference\": \"INV-20250724-01\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://postman-echo.com/post",
+					"protocol": "https",
+					"host": [
+						"postman-echo",
+						"com"
+					],
+					"path": [
+						"post"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "montant non entier",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const body = pm.request.body.raw;\r",
+							"const json = JSON.parse(body);\r",
+							"\r",
+							"// Vérifie si le type de 'montant' est bien un number\r",
+							"if (typeof json.montant === \"number\") {\r",
+							"    pm.test(\"Test passé : montant est un entier (number)\", function () {\r",
+							"        pm.expect(typeof json.montant).to.eql(\"number\");\r",
+							"    });\r",
+							"} else {\r",
+							"    pm.test(\"Erreur : montant n'est pas un entier (type: \" + typeof json.montant + \")\", function () {\r",
+							"        pm.expect.fail(\"Type du champ 'montant' invalide : \" + typeof json.montant);\r",
+							"    });\r",
+							"}\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer token_invalide",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"journal_code\": \"ACH\",\r\n  \"date\": \"2025-07-24\",\r\n  \"montant\": \"abc\",\r\n  \"description\": \"Facture erronée\",\r\n  \"reference\": \"TEST-NON-ENTIER\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://postman-echo.com/post",
+					"protocol": "https",
+					"host": [
+						"postman-echo",
+						"com"
+					],
+					"path": [
+						"post"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "montant > 1000",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const body = pm.request.body.raw;\r",
+							"const json = JSON.parse(body);\r",
+							"\r",
+							"// Test dynamique : tout dépend de la valeur du montant\r",
+							"if (json.montant < 1000000) {\r",
+							"    pm.test(\" Test passé : montant inférieur à 1 million\", function () {\r",
+							"        pm.expect(json.montant).to.be.below(1000000);\r",
+							"    });\r",
+							"} else {\r",
+							"    pm.test(\"Anomalie : montant trop élevé\", function () {\r",
+							"        pm.expect.fail(\"Montant > 1 million détecté !\");\r",
+							"    });\r",
+							"}\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer token_invalide",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"journal_code\": \"ACH\",\r\n  \"date\": \"2025-07-24\",\r\n  \"montant\": 1111111111100,\r\n  \"description\": \"Paiement anormal\",\r\n  \"reference\": \"TEST-ANOMALIE\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://postman-echo.com/post",
+					"protocol": "https",
+					"host": [
+						"postman-echo",
+						"com"
+					],
+					"path": [
+						"post"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
